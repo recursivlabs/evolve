@@ -1,8 +1,17 @@
 import * as React from 'react';
-import { sdk, getSdk } from './sdk';
+import { Recursiv } from '@recursiv/sdk';
+import { BASE_ORIGIN, ORG_ID, createAuthedSdk } from './recursiv';
 import * as storage from './storage';
 
-const STORAGE_KEY = 'evolve:user';
+const KEYS = {
+  apiKey: 'recursiv:api_key',
+  user: 'recursiv:user',
+  orgId: 'recursiv:org_id',
+  version: 'recursiv:auth_version',
+};
+
+// Bump this when scopes change to force re-auth
+const AUTH_VERSION = '1';
 
 interface User {
   id: string;
@@ -13,6 +22,8 @@ interface User {
 
 interface AuthContextValue {
   user: User | null;
+  sdk: Recursiv | null;
+  orgId: string | null;
   isLoading: boolean;
   isAuthenticated: boolean;
   signUp: (name: string, email: string, password: string) => Promise<void>;
@@ -22,63 +33,186 @@ interface AuthContextValue {
 
 const AuthContext = React.createContext<AuthContextValue | null>(null);
 
+/**
+ * Create a per-user API key using the session cookie from sign-up/sign-in.
+ * This key is scoped to the user and used for all subsequent SDK calls.
+ */
+async function createApiKeyWithCookie(): Promise<string | null> {
+  try {
+    const res = await fetch(`${BASE_ORIGIN}/api/v1/auth/api-keys`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Origin': BASE_ORIGIN },
+      credentials: 'include',
+      body: JSON.stringify({
+        name: 'App session',
+        scopes: [
+          'posts:read', 'posts:write',
+          'users:read',
+          'communities:read', 'communities:write',
+          'chat:read', 'chat:write',
+          'agents:read', 'agents:write',
+          'memory:read', 'memory:write',
+          'tags:read', 'tags:write',
+          'settings:read',
+        ],
+      }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data.data?.key || data.key || null;
+  } catch {
+    return null;
+  }
+}
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = React.useState<User | null>(null);
+  const [authedSdk, setAuthedSdk] = React.useState<Recursiv | null>(null);
+  const [orgId, setOrgId] = React.useState<string | null>(null);
   const [isLoading, setIsLoading] = React.useState(true);
 
+  // Restore session on mount
   React.useEffect(() => {
     (async () => {
       try {
-        const stored = await storage.getItem(STORAGE_KEY);
-        if (stored && sdk) {
-          const parsed = JSON.parse(stored) as User;
-          const me = await sdk.users.me().catch(() => null);
-          if (me?.data) {
-            setUser(parsed);
-          } else {
-            await storage.removeItem(STORAGE_KEY);
+        const storedVersion = await storage.getItem(KEYS.version);
+        if (storedVersion !== AUTH_VERSION) {
+          await clearStorage();
+          setIsLoading(false);
+          return;
+        }
+
+        const [storedApiKey, storedUser, storedOrgId] = await Promise.all([
+          storage.getItem(KEYS.apiKey),
+          storage.getItem(KEYS.user),
+          storage.getItem(KEYS.orgId),
+        ]);
+
+        if (storedApiKey && storedUser) {
+          const sdk = createAuthedSdk(storedApiKey);
+          try {
+            await sdk.users.me();
+            setAuthedSdk(sdk);
+            setUser(JSON.parse(storedUser));
+            setOrgId(storedOrgId);
+          } catch {
+            await clearStorage();
           }
         }
       } catch {
-        await storage.removeItem(STORAGE_KEY).catch(() => {});
+        await clearStorage();
       } finally {
         setIsLoading(false);
       }
     })();
   }, []);
 
+  async function clearStorage() {
+    await Promise.all([
+      storage.removeItem(KEYS.apiKey),
+      storage.removeItem(KEYS.user),
+      storage.removeItem(KEYS.orgId),
+      storage.removeItem(KEYS.version),
+    ]).catch(() => {});
+  }
+
   const signUp = React.useCallback(async (name: string, email: string, password: string) => {
-    const result = await sdk.auth.signUp({ name, email, password });
+    const res = await fetch(`${BASE_ORIGIN}/api/auth/sign-up/email`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Origin': BASE_ORIGIN },
+      body: JSON.stringify({ name, email, password }),
+      credentials: 'include',
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      let parsed: any = {};
+      try { parsed = JSON.parse(text); } catch {}
+      throw new Error(parsed.message || `Sign up failed (${res.status})`);
+    }
+
+    const body = await res.json();
+    const apiKey = await createApiKeyWithCookie();
+    if (!apiKey) throw new Error('Failed to create session key');
+
+    const sdk = createAuthedSdk(apiKey);
     const authUser: User = {
-      id: result.user.id,
-      name: result.user.name,
-      email: result.user.email,
-      image: result.user.image,
+      id: body.user?.id || body.id,
+      name: body.user?.name || name,
+      email: body.user?.email || email,
+      image: body.user?.image ?? null,
     };
-    await storage.setItem(STORAGE_KEY, JSON.stringify(authUser));
+
+    await Promise.all([
+      storage.setItem(KEYS.apiKey, apiKey),
+      storage.setItem(KEYS.user, JSON.stringify(authUser)),
+      storage.setItem(KEYS.orgId, ORG_ID),
+      storage.setItem(KEYS.version, AUTH_VERSION),
+    ]);
+
+    setAuthedSdk(sdk);
     setUser(authUser);
+    setOrgId(ORG_ID);
   }, []);
 
   const signIn = React.useCallback(async (email: string, password: string) => {
-    const result = await sdk.auth.signIn({ email, password });
+    const res = await fetch(`${BASE_ORIGIN}/api/auth/sign-in/email`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Origin': BASE_ORIGIN },
+      body: JSON.stringify({ email, password }),
+      credentials: 'include',
+    });
+
+    if (!res.ok) {
+      const text = await res.text();
+      let parsed: any = {};
+      try { parsed = JSON.parse(text); } catch {}
+      throw new Error(parsed.message || `Sign in failed (${res.status})`);
+    }
+
+    const body = await res.json();
+    const apiKey = await createApiKeyWithCookie();
+    if (!apiKey) throw new Error('Failed to create session key');
+
+    const sdk = createAuthedSdk(apiKey);
     const authUser: User = {
-      id: result.user.id,
-      name: result.user.name,
-      email: result.user.email,
-      image: result.user.image,
+      id: body.user?.id || body.id,
+      name: body.user?.name || '',
+      email: body.user?.email || email,
+      image: body.user?.image ?? null,
     };
-    await storage.setItem(STORAGE_KEY, JSON.stringify(authUser));
+
+    await Promise.all([
+      storage.setItem(KEYS.apiKey, apiKey),
+      storage.setItem(KEYS.user, JSON.stringify(authUser)),
+      storage.setItem(KEYS.orgId, ORG_ID),
+      storage.setItem(KEYS.version, AUTH_VERSION),
+    ]);
+
+    setAuthedSdk(sdk);
     setUser(authUser);
+    setOrgId(ORG_ID);
   }, []);
 
   const signOut = React.useCallback(async () => {
-    await storage.removeItem(STORAGE_KEY);
+    await clearStorage();
     setUser(null);
+    setAuthedSdk(null);
+    setOrgId(null);
   }, []);
 
   const value = React.useMemo(
-    () => ({ user, isLoading, isAuthenticated: !!user, signUp, signIn, signOut }),
-    [user, isLoading, signUp, signIn, signOut],
+    () => ({
+      user,
+      sdk: authedSdk,
+      orgId,
+      isLoading,
+      isAuthenticated: !!user,
+      signUp,
+      signIn,
+      signOut,
+    }),
+    [user, authedSdk, orgId, isLoading, signUp, signIn, signOut],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

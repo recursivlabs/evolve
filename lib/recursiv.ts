@@ -1,21 +1,37 @@
 import { Recursiv } from '@recursiv/sdk';
 
-const BASE_URL =
+export const BASE_URL =
   process.env.EXPO_PUBLIC_RECURSIV_API_URL ||
   process.env.EXPO_PUBLIC_API_URL ||
   'https://api.recursiv.io/api/v1';
 
-const API_KEY = process.env.EXPO_PUBLIC_RECURSIV_API_KEY || '';
+export const BASE_ORIGIN = BASE_URL.replace(/\/api\/v1$/, '');
+
+export const API_KEY = process.env.EXPO_PUBLIC_RECURSIV_API_KEY || '';
+
+export const ORG_ID = process.env.EXPO_PUBLIC_RECURSIV_ORG_ID || '';
 
 /**
- * SDK instance — lazy-initialized so the app doesn't crash without an API key.
- * Auth methods (signUp/signIn) bypass the API key internally.
- * Data methods (posts, databases, agents, etc.) use the API key automatically.
+ * Create an authenticated SDK instance with a per-user API key.
+ * Used after sign-up/sign-in to scope all calls to the authenticated user.
+ */
+export function createAuthedSdk(apiKey: string): Recursiv {
+  return new Recursiv({
+    apiKey,
+    baseUrl: BASE_URL,
+    timeout: 120_000,
+  });
+}
+
+/**
+ * Default SDK instance — uses the project API key for public data.
+ * For authenticated operations, use createAuthedSdk() with the user's key.
  */
 let _sdk: Recursiv | null = null;
 
 export function getSdk(): Recursiv {
   if (!_sdk) {
+    if (!API_KEY) throw new Error('No API key configured');
     _sdk = new Recursiv({
       apiKey: API_KEY,
       baseUrl: BASE_URL,
