@@ -3,6 +3,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Text, Divider } from '../components';
 import { StatsBar } from '../components/StatsBar';
+import { HowItWorks } from '../components/HowItWorks';
 
 export default function LandingPage() {
   return (
@@ -104,6 +105,10 @@ export default function LandingPage() {
           {/* ─── STATS BAR ────────────────────────────────────────── */}
           <StatsBar />
           {/* ─── END STATS BAR ────────────────────────────────────── */}
+
+          {/* ─── HOW IT WORKS ─────────────────────────────────────── */}
+          <HowItWorks />
+          {/* ─── END HOW IT WORKS ─────────────────────────────────── */}
 
           {/* SECTIONS GO HERE */}
         </View>
