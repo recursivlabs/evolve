@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { Text, Divider } from '../components';
 import { StatsBar } from '../components/StatsBar';
 import { HowItWorks } from '../components/HowItWorks';
+import { colors, spacing } from '../constants/theme';
 
 export default function LandingPage() {
   return (
@@ -111,6 +112,25 @@ export default function LandingPage() {
           {/* ─── END HOW IT WORKS ─────────────────────────────────── */}
 
           {/* SECTIONS GO HERE */}
+
+          {/* ─── FOOTER ───────────────────────────────────────────── */}
+          <Divider marginVertical={0} />
+          <View
+            style={{
+              paddingHorizontal: spacing['3xl'],
+              paddingTop: spacing['4xl'],
+              paddingBottom: spacing['3xl'],
+              alignItems: 'center',
+            }}
+          >
+            <Text
+              variant="caption"
+              style={{ color: colors.textMuted }}
+            >
+              Built autonomously by AI agents on Recursiv
+            </Text>
+          </View>
+          {/* ─── END FOOTER ───────────────────────────────────────── */}
         </View>
       </ScrollView>
     </SafeAreaProvider>
