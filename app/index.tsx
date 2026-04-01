@@ -1,79 +1,79 @@
-import { ScrollView, View, Platform } from 'react-native';
+import { View, Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { Text, Card, Container } from '../components';
-import { colors, spacing } from '../constants/theme';
+import { Text } from '../components';
 
 export default function LandingPage() {
   return (
     <SafeAreaProvider>
       <StatusBar style="light" />
-      <Container safeTop>
-        <ScrollView
-          style={{ flex: 1 }}
-          contentContainerStyle={{ paddingBottom: spacing['6xl'] }}
-          showsVerticalScrollIndicator={false}
+      <View
+        style={{
+          flex: 1,
+          backgroundColor: '#05050a',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: 32,
+        }}
+      >
+        {/* Outer glow */}
+        {Platform.OS === 'web' ? (
+          <>
+            <View
+              style={{
+                position: 'absolute',
+                width: 600,
+                height: 600,
+                borderRadius: 9999,
+                backgroundColor: '#7C6FF7',
+                opacity: 0.03,
+                ...(Platform.OS === 'web' ? { filter: 'blur(150px)' } as any : {}),
+              }}
+            />
+            <View
+              style={{
+                position: 'absolute',
+                width: 200,
+                height: 200,
+                borderRadius: 9999,
+                backgroundColor: '#7C6FF7',
+                opacity: 0.06,
+                ...(Platform.OS === 'web' ? { filter: 'blur(60px)' } as any : {}),
+              }}
+            />
+          </>
+        ) : null}
+
+        <Text
+          variant="hero"
+          align="center"
+          style={{
+            fontSize: 52,
+            letterSpacing: -1.5,
+            marginBottom: 20,
+            ...(Platform.OS === 'web' ? {
+              background: 'linear-gradient(135deg, #e4e4e7, #7C6FF7)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            } as any : { color: '#e4e4e7' }),
+          }}
         >
-          {/* Hero */}
-          <View style={{ alignItems: 'center', paddingTop: spacing['6xl'], paddingBottom: spacing['4xl'] }}>
-            {Platform.OS === 'web' ? (
-              <View
-                style={{
-                  position: 'absolute',
-                  top: 20,
-                  width: 400,
-                  height: 400,
-                  borderRadius: 9999,
-                  backgroundColor: '#7C6FF7',
-                  opacity: 0.05,
-                  ...(Platform.OS === 'web' ? { filter: 'blur(100px)' } as any : {}),
-                }}
-              />
-            ) : null}
-            <Text variant="hero" align="center" style={{ marginBottom: spacing.lg }}>
-              Evolve
-            </Text>
-            <Text
-              variant="body"
-              color={colors.textSecondary}
-              align="center"
-              style={{ maxWidth: 400, lineHeight: 24 }}
-            >
-              A living app, built and improved autonomously by AI agents on Recursiv.
-            </Text>
-          </View>
+          Evolve
+        </Text>
 
-          {/* What is this */}
-          <View style={{ gap: spacing.lg, paddingBottom: spacing['3xl'] }}>
-            <Card variant="raised">
-              <View style={{ gap: spacing.sm }}>
-                <Text variant="h3">What you're looking at</Text>
-                <Text variant="body" color={colors.textSecondary} style={{ lineHeight: 22 }}>
-                  This app is being built from scratch by a swarm of AI agents. No human is writing the code. Agents plan features, write code, open pull requests, QA the live site, and fix issues — all autonomously.
-                </Text>
-              </View>
-            </Card>
-
-            <Card variant="raised">
-              <View style={{ gap: spacing.sm }}>
-                <Text variant="h3">How it works</Text>
-                <Text variant="body" color={colors.textSecondary} style={{ lineHeight: 22 }}>
-                  A Coordinator agent plans the work and creates tasks. A Dev agent claims tasks, writes code in a sandbox, and opens PRs. A QA agent uses Browser Use to test the live site and report bugs. The cycle repeats.
-                </Text>
-              </View>
-            </Card>
-
-            <Card variant="raised">
-              <View style={{ gap: spacing.sm }}>
-                <Text variant="h3">Powered by Recursiv</Text>
-                <Text variant="body" color={colors.textSecondary} style={{ lineHeight: 22 }}>
-                  Memory, task dispatch, live feed, sandboxes, deployments — all through the Recursiv SDK. Watch the swarm work in real-time on the Recursiv Live Feed.
-                </Text>
-              </View>
-            </Card>
-          </View>
-        </ScrollView>
-      </Container>
+        <Text
+          variant="body"
+          align="center"
+          style={{
+            maxWidth: 380,
+            lineHeight: 26,
+            color: '#5a5a70',
+            letterSpacing: 0.3,
+          }}
+        >
+          A living app, built and improved autonomously{'\n'}by AI agents on Recursiv.
+        </Text>
+      </View>
     </SafeAreaProvider>
   );
 }
