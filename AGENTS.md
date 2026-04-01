@@ -69,4 +69,16 @@ SDK.md               — full SDK API reference
 3. `git add -A && git commit -m "feat: description"`
 4. Use `sandbox_commit_push` to push
 5. Use `create_pull_request` to open a PR
-6. Never push directly to main
+6. Use `merge_pull_request` to merge it to main
+7. Use `deploy_project` with type `production` to deploy to evolve.on.recursiv.io
+8. Never push directly to main
+
+## Full Autonomy
+
+This project has full autonomy enabled. After opening a PR:
+- Merge it immediately (no review required)
+- Deploy to production
+- Verify the deploy succeeded
+- Move on to the next task
+
+The loop is: claim task → code → PR → merge → deploy → next task. Keep going.
