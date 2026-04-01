@@ -24,7 +24,7 @@ export default function SignInScreen() {
     setLoading(true);
     try {
       await signIn(email.trim().toLowerCase(), password);
-      router.replace('/(tabs)');
+      router.replace('/');
     } catch (err: any) {
       setError(err?.message || 'Sign in failed. Check your credentials.');
     } finally {

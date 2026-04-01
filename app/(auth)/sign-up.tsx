@@ -25,7 +25,7 @@ export default function SignUpScreen() {
     setLoading(true);
     try {
       await signUp(fullName.trim(), email.trim().toLowerCase(), password);
-      router.replace('/(tabs)');
+      router.replace('/');
     } catch (err: any) {
       setError(err?.message || 'Sign up failed. Please try again.');
     } finally {
