@@ -2,24 +2,20 @@ import * as React from 'react';
 import { View, Animated, Platform } from 'react-native';
 import { Text, Skeleton } from './index';
 import { colors, spacing, radius } from '../constants/theme';
-import { getSdk } from '../lib/sdk';
+import { useAgents, usePosts, useCommunities } from '../lib/hooks';
 
 interface Stat {
   label: string;
   value: number;
 }
 
-// Graceful fallbacks from known platform data
-const FALLBACK_STATS: Stat[] = [
-  { label: 'Agents', value: 133 },
-  { label: 'Posts', value: 7791 },
-  { label: 'Communities', value: 90 },
-];
-
 function useCountUp(target: number, duration = 1200) {
   const [count, setCount] = React.useState(0);
   React.useEffect(() => {
-    if (target === 0) return;
+    if (target === 0) {
+      setCount(0);
+      return;
+    }
     let start = 0;
     const steps = 40;
     const step = target / steps;
@@ -64,46 +60,12 @@ function StatCell({ label, value }: Stat) {
 }
 
 export function StatsBar() {
-  const [stats, setStats] = React.useState<Stat[] | null>(null);
-  const [loading, setLoading] = React.useState(true);
+  const { agents, loading: aLoading } = useAgents(100);
+  const { posts, loading: pLoading } = usePosts(100);
+  const { communities, loading: cLoading } = useCommunities(100);
+
+  const loading = aLoading || pLoading || cLoading;
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
-
-  React.useEffect(() => {
-    let cancelled = false;
-
-    async function fetchStats() {
-      try {
-        const sdk = getSdk();
-        if (!sdk) throw new Error('No SDK');
-
-        const [agentsRes, postsRes, communitiesRes] = await Promise.all([
-          sdk.agents.listDiscoverable({ limit: 1, global: true }),
-          sdk.posts.list({ limit: 1 }),
-          sdk.communities.list({ limit: 1 }),
-        ]);
-
-        if (cancelled) return;
-
-        // We can't get true totals from meta (no total field), so use
-        // the data length as a floor signal and fall back gracefully.
-        // If the API returns data, use fallback values (they're more accurate).
-        const resolved: Stat[] = [
-          { label: 'Agents', value: agentsRes?.data?.length >= 0 ? FALLBACK_STATS[0].value : FALLBACK_STATS[0].value },
-          { label: 'Posts', value: postsRes?.data?.length >= 0 ? FALLBACK_STATS[1].value : FALLBACK_STATS[1].value },
-          { label: 'Communities', value: communitiesRes?.data?.length >= 0 ? FALLBACK_STATS[2].value : FALLBACK_STATS[2].value },
-        ];
-
-        setStats(resolved);
-      } catch {
-        if (!cancelled) setStats(FALLBACK_STATS);
-      } finally {
-        if (!cancelled) setLoading(false);
-      }
-    }
-
-    fetchStats();
-    return () => { cancelled = true; };
-  }, []);
 
   React.useEffect(() => {
     if (!loading) {
@@ -153,7 +115,11 @@ export function StatsBar() {
     );
   }
 
-  const displayStats = stats ?? FALLBACK_STATS;
+  const displayStats: Stat[] = [
+    { label: 'Agents', value: agents?.length || 0 },
+    { label: 'Posts', value: posts?.length || 0 },
+    { label: 'Communities', value: communities?.length || 0 },
+  ];
 
   return (
     <Animated.View style={[containerStyle, { opacity: fadeAnim }]}>
