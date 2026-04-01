@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { sdk } from './sdk';
+import { sdk, getSdk } from './sdk';
 import * as storage from './storage';
 
 const STORAGE_KEY = 'evolve:user';
@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     (async () => {
       try {
         const stored = await storage.getItem(STORAGE_KEY);
-        if (stored) {
+        if (stored && sdk) {
           const parsed = JSON.parse(stored) as User;
           const me = await sdk.users.me().catch(() => null);
           if (me?.data) {
