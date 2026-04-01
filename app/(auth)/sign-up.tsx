@@ -10,21 +10,20 @@ export default function SignUpScreen() {
   const router = useRouter();
   const { signUp } = useAuth();
   const { name, accentColor } = useProject();
-  const [fullName, setFullName] = React.useState('');
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [error, setError] = React.useState('');
   const [loading, setLoading] = React.useState(false);
 
   const handleSignUp = async () => {
-    if (!fullName.trim() || !email.trim() || !password.trim()) {
-      setError('All fields are required');
+    if (!email.trim() || !password.trim()) {
+      setError('Email and password are required');
       return;
     }
     setError('');
     setLoading(true);
     try {
-      await signUp(fullName.trim(), email.trim().toLowerCase(), password);
+      await signUp(email.trim().split('@')[0], email.trim().toLowerCase(), password);
       router.replace('/welcome');
     } catch (err: any) {
       setError(err?.message || 'Sign up failed. Please try again.');
@@ -42,14 +41,6 @@ export default function SignUpScreen() {
         Get started with {name}
       </Text>
 
-      <Input
-        label="Name"
-        placeholder="Your name"
-        value={fullName}
-        onChangeText={setFullName}
-        autoCapitalize="words"
-        autoComplete="name"
-      />
       <Input
         label="Email"
         placeholder="you@example.com"
