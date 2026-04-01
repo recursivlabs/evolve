@@ -111,7 +111,7 @@ export default function LandingPage() {
                 Get started
               </Button>
               <Button
-                variant="outline"
+                variant="secondary"
                 size="lg"
                 onPress={() => router.push('/(auth)/sign-in')}
               >

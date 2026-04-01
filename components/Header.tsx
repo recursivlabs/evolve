@@ -1,9 +1,11 @@
 import { View, Linking, Platform } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Text } from './Text';
 import { Button } from './Button';
 import { colors, spacing } from '../constants/theme';
 
 export function Header() {
+  const router = useRouter();
   return (
     <View
       style={{
@@ -16,11 +18,11 @@ export function Header() {
         borderBottomColor: colors.borderSubtle,
         backgroundColor: colors.surface,
         ...(Platform.OS === 'web'
-          ? {
+          ? ({
               position: 'sticky',
               top: 0,
               zIndex: 50,
-            }
+            } as any)
           : {}),
       }}
     >
@@ -35,7 +37,7 @@ export function Header() {
           variant="ghost"
           size="sm"
           onPress={() => {
-            // Future Auth flow routing
+            router.push('/(auth)/sign-in');
           }}
         >
           Log in
@@ -44,7 +46,7 @@ export function Header() {
           variant="primary"
           size="sm"
           onPress={() => {
-            // Future Auth flow routing
+            router.push('/(auth)/sign-up');
           }}
         >
           Get started
