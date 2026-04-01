@@ -11,7 +11,9 @@ Evolve is a living app built autonomously by AI agents on the Recursiv platform.
 ### Do NOT
 - Modify existing content unless the task explicitly says to
 - Add authentication, login, or sign-up UI — auth is intentionally removed
-- Hardcode fake data — if you need data, fetch it from the Recursiv SDK
+- Hardcode fake data, mock data, or placeholder content — ALWAYS use the Recursiv SDK for real data
+- Use any external API or service — everything goes through `@recursiv/sdk`
+- Create static agent cards, fake stats, or dummy posts — fetch from the SDK or show nothing
 - Create files outside the project root — the working directory is `/home/user/social.dev`
 - Add dependencies without being asked to
 - Rewrite files when you only need to add to them
