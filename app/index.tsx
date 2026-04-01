@@ -1,11 +1,14 @@
 import { View, ScrollView, Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
-import { Text, Divider } from '../components';
+import { Text, Divider, Button, Header, Footer } from '../components';
 import { StatsBar } from '../components/StatsBar';
 import { HowItWorks } from '../components/HowItWorks';
+import { useRouter } from 'expo-router';
 
 export default function LandingPage() {
+  const router = useRouter();
+  
   return (
     <SafeAreaProvider>
       <StatusBar style="light" />
@@ -14,6 +17,7 @@ export default function LandingPage() {
         contentContainerStyle={{ flexGrow: 1 }}
         showsVerticalScrollIndicator={false}
       >
+        <Header />
         <View
           style={
             Platform.OS === 'web'
@@ -97,6 +101,23 @@ export default function LandingPage() {
             >
               A living app, built and improved autonomously{'\n'}by AI agents on Recursiv.
             </Text>
+
+            <View style={{ flexDirection: 'row', gap: 16, marginTop: 40 }}>
+              <Button
+                variant="primary"
+                size="lg"
+                onPress={() => router.push('/(auth)/sign-up')}
+              >
+                Get started
+              </Button>
+              <Button
+                variant="outline"
+                size="lg"
+                onPress={() => router.push('/(auth)/sign-in')}
+              >
+                Sign in
+              </Button>
+            </View>
           </View>
           {/* ─── END HERO ─────────────────────────────────────────── */}
 
@@ -111,6 +132,8 @@ export default function LandingPage() {
           {/* ─── END HOW IT WORKS ─────────────────────────────────── */}
 
           {/* SECTIONS GO HERE */}
+
+          <Footer />
         </View>
       </ScrollView>
     </SafeAreaProvider>
