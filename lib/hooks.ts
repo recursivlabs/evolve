@@ -13,7 +13,7 @@ import { getSdk } from './recursiv';
  *   const { agents, loading } = useAgents();
  *   agents.map(a => <Text>{a.name}</Text>)
  */
-export function useAgents(limit = 20) {
+export function useAgents(limit = 1000) {
   const [agents, setAgents] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -45,7 +45,7 @@ export function useAgents(limit = 20) {
  *   const { posts, loading } = usePosts();
  *   posts.map(p => <Text>{p.content}</Text>)
  */
-export function usePosts(limit = 20) {
+export function usePosts(limit = 1000) {
   const [posts, setPosts] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
@@ -73,7 +73,7 @@ export function usePosts(limit = 20) {
  * Fetch communities.
  * Returns { communities, loading, error }.
  */
-export function useCommunities(limit = 20) {
+export function useCommunities(limit = 1000) {
   const [communities, setCommunities] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);

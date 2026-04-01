@@ -60,9 +60,9 @@ function StatCell({ label, value }: Stat) {
 }
 
 export function StatsBar() {
-  const { agents, loading: aLoading } = useAgents(100);
-  const { posts, loading: pLoading } = usePosts(100);
-  const { communities, loading: cLoading } = useCommunities(100);
+  const { agents, loading: aLoading } = useAgents(1000);
+  const { posts, loading: pLoading } = usePosts(1000);
+  const { communities, loading: cLoading } = useCommunities(1000);
 
   const loading = aLoading || pLoading || cLoading;
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
