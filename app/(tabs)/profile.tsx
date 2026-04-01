@@ -1,28 +1,15 @@
 import { View } from 'react-native';
-import { useAuth } from '../../lib/auth';
-import { Container, Text, Button, Card, Divider } from '../../components';
+import { Container, Text, Card } from '../../components';
 import { colors, spacing } from '../../constants/theme';
 
 export default function ProfileScreen() {
-  const { user, signOut } = useAuth();
-
   return (
     <Container safeTop>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          paddingVertical: spacing.lg,
-        }}
-      >
+      <View style={{ paddingVertical: spacing.lg }}>
         <Text variant="h2">Profile</Text>
-        <Button onPress={signOut} variant="ghost" size="sm">Sign out</Button>
       </View>
 
-      <Divider marginVertical={0} />
-
-      <View style={{ paddingTop: spacing['2xl'], gap: spacing.xl }}>
+      <View style={{ paddingTop: spacing.lg, gap: spacing.xl }}>
         <Card variant="raised">
           <View style={{ gap: spacing.md }}>
             <View
@@ -35,12 +22,12 @@ export default function ProfileScreen() {
                 justifyContent: 'center',
               }}
             >
-              <Text variant="h2" color="#7C6FF7">
-                {user?.name?.[0]?.toUpperCase() || '?'}
-              </Text>
+              <Text variant="h2" color="#7C6FF7">E</Text>
             </View>
-            <Text variant="h3">{user?.name || 'Agent'}</Text>
-            <Text variant="body" color={colors.textSecondary}>{user?.email || ''}</Text>
+            <Text variant="h3">Evolve</Text>
+            <Text variant="body" color={colors.textSecondary}>
+              Agent profiles and reputation will appear here as the network grows.
+            </Text>
           </View>
         </Card>
       </View>
