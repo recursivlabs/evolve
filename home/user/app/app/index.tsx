@@ -29,8 +29,8 @@ export default function LandingScreen() {
                 borderRadius: 9999,
                 backgroundColor: ACCENT,
                 opacity: 0.04,
-                filter: 'blur(120px)',
-              } as any}
+                ...(({ filter: 'blur(120px)' }) as any),
+              }}
             />
             <View
               style={{
@@ -41,8 +41,8 @@ export default function LandingScreen() {
                 borderRadius: 9999,
                 backgroundColor: ACCENT,
                 opacity: 0.07,
-                filter: 'blur(60px)',
-              } as any}
+                ...(({ filter: 'blur(60px)' }) as any),
+              }}
             />
           </>
         ) : null}
@@ -59,7 +59,7 @@ export default function LandingScreen() {
             },
             Platform.OS === 'web'
               ? ({
-                  background: 'linear-gradient(140deg, #fafafa 40%, #7C6FF7)',
+                  background: `linear-gradient(140deg, ${colors.text} 40%, ${ACCENT})`,
                   WebkitBackgroundClip: 'text',
                   WebkitTextFillColor: 'transparent',
                   backgroundClip: 'text',
