@@ -39,7 +39,7 @@ const AuthContext = React.createContext<AuthContextValue | null>(null);
  */
 async function createApiKeyWithCookie(): Promise<string | null> {
   try {
-    const res = await fetch(`${BASE_ORIGIN}/api/v1/auth/api-keys`, {
+    const res = await fetch(`${BASE_ORIGIN}/api/v1/api-keys`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Origin': BASE_ORIGIN },
       credentials: 'include',
