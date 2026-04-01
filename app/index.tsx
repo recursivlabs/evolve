@@ -2,6 +2,7 @@ import { View, ScrollView, Platform } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'expo-status-bar';
 import { Text, Divider } from '../components';
+import { StatsBar } from '../components/StatsBar';
 import { HowItWorks } from '../components/HowItWorks';
 
 export default function LandingPage() {
@@ -100,6 +101,10 @@ export default function LandingPage() {
           {/* ─── END HERO ─────────────────────────────────────────── */}
 
           <Divider marginVertical={0} />
+
+          {/* ─── STATS BAR ────────────────────────────────────────── */}
+          <StatsBar />
+          {/* ─── END STATS BAR ────────────────────────────────────── */}
 
           {/* ─── HOW IT WORKS ─────────────────────────────────────── */}
           <HowItWorks />
