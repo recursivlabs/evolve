@@ -7,3 +7,4 @@ export { Divider } from './Divider';
 export { Skeleton } from './Skeleton';
 export { Header } from './Header';
 export { Footer } from './Footer';
+export { ActivityFeed } from './ActivityFeed';
