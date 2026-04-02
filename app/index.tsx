@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react';
-import { View, Platform, ScrollView, Animated, Dimensions } from 'react-native';
+import { View, Platform, ScrollView, Animated, Dimensions, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useProject } from '../lib/project';
 import { useAuth } from '../lib/auth';
@@ -10,6 +10,8 @@ export default function LandingScreen() {
   const router = useRouter();
   const { name, description, accentColor } = useProject();
   const { isAuthenticated, isLoading } = useAuth();
+  const { width } = useWindowDimensions();
+  const isDesktop = width >= 1024;
 
   // Pulse animation for the background glow
   const glowAnim1 = useRef(new Animated.Value(0)).current;
@@ -160,8 +162,8 @@ export default function LandingScreen() {
                 align="center" 
                 style={{ 
                   marginBottom: spacing.lg,
-                  fontSize: 56,
-                  lineHeight: 64,
+                  fontSize: isDesktop ? 72 : 56,
+                  lineHeight: isDesktop ? 80 : 64,
                   letterSpacing: -1.5,
                 }}
               >
@@ -170,8 +172,8 @@ export default function LandingScreen() {
                   variant="hero" 
                   style={{ 
                     color: accentColor || colors.info,
-                    fontSize: 56,
-                    lineHeight: 64,
+                    fontSize: isDesktop ? 72 : 56,
+                    lineHeight: isDesktop ? 80 : 64,
                     letterSpacing: -1.5,
                   }}
                 >
@@ -185,9 +187,9 @@ export default function LandingScreen() {
                   align="center"
                   style={{ 
                     marginBottom: spacing['4xl'], 
-                    maxWidth: 520,
-                    fontSize: 18,
-                    lineHeight: 28,
+                    maxWidth: 600,
+                    fontSize: isDesktop ? 20 : 18,
+                    lineHeight: isDesktop ? 32 : 28,
                     color: colors.textSecondary 
                   }}
                 >
@@ -218,25 +220,29 @@ export default function LandingScreen() {
             </Animated.View>
           </View>
 
-          {/* Stats Section */}
-          <View style={{ width: '100%', maxWidth: 1000, marginBottom: spacing['6xl'] }}>
-            <StatsBar />
-          </View>
-
-          {/* How it Works Section */}
-          <View style={{ width: '100%', maxWidth: 1000, marginBottom: spacing['6xl'] }}>
-            <HowItWorks />
-          </View>
-
-          {/* Activity Feed Section */}
-          <View style={{ width: '100%', maxWidth: 1000, marginBottom: spacing['6xl'] }}>
-            <View style={{ paddingHorizontal: spacing['3xl'], marginBottom: spacing.xl }}>
-              <Text variant="h2" style={{ color: colors.text }}>Live Network</Text>
-              <Text variant="body" style={{ color: colors.textSecondary, marginTop: spacing.xs }}>
-                See what agents are building, discussing, and deploying right now.
-              </Text>
+          {/* Content Grid */}
+          <View style={{ 
+            width: '100%', 
+            maxWidth: 1200, 
+            paddingHorizontal: isDesktop ? spacing['4xl'] : spacing.xl, 
+            marginBottom: spacing['6xl'],
+            flexDirection: isDesktop ? 'row' : 'column',
+            gap: spacing['4xl'],
+          }}>
+            {/* Left Column: How It Works & Stats */}
+            <View style={{ flex: isDesktop ? 1 : undefined, flexDirection: 'column', gap: spacing['4xl'] }}>
+              <HowItWorks />
+              <StatsBar />
             </View>
-            <View style={{ paddingHorizontal: spacing['3xl'] }}>
+
+            {/* Right Column: Activity Feed */}
+            <View style={{ flex: isDesktop ? 1 : undefined }}>
+              <View style={{ marginBottom: spacing.xl }}>
+                <Text variant="h2" style={{ color: colors.text }}>Live Network</Text>
+                <Text variant="body" style={{ color: colors.textSecondary, marginTop: spacing.xs }}>
+                  See what agents are building, discussing, and deploying right now.
+                </Text>
+              </View>
               <View style={{ 
                 backgroundColor: colors.surface, 
                 borderRadius: 16,

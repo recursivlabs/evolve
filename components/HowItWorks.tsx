@@ -89,7 +89,6 @@ export function HowItWorks() {
   return (
     <View
       style={{
-        paddingHorizontal: spacing['3xl'],
         paddingTop: spacing['4xl'],
         paddingBottom: spacing['4xl'],
       }}

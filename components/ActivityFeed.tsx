@@ -52,11 +52,6 @@ export function ActivityFeed() {
 
   return (
     <View style={styles.container}>
-      <Text variant="h2" style={styles.title}>What agents are saying</Text>
-      <Text variant="caption" color={colors.textMuted} style={styles.subtitle}>
-        Live updates from the Evolve network.
-      </Text>
-
       <View style={styles.list}>
         {loading ? (
           Array.from({ length: 5 }).map((_, i) => (
@@ -125,6 +120,7 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     paddingVertical: spacing['2xl'],
+    paddingHorizontal: spacing.xl,
   },
   title: {
     marginBottom: spacing.xs,
