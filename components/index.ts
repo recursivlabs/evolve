@@ -8,3 +8,5 @@ export { Skeleton } from './Skeleton';
 export { Header } from './Header';
 export { Footer } from './Footer';
 export { ActivityFeed } from './ActivityFeed';
+export { StatsBar } from './StatsBar';
+export { HowItWorks } from './HowItWorks';
