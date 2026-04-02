@@ -130,7 +130,7 @@ export default function LandingScreen() {
             <Animated.View
               style={{
                 alignItems: 'center',
-                maxWidth: 720,
+                maxWidth: 900,
                 width: '100%',
                 opacity: fadeAnim,
                 transform: [
@@ -187,9 +187,9 @@ export default function LandingScreen() {
                   align="center"
                   style={{ 
                     marginBottom: spacing['4xl'], 
-                    maxWidth: 600,
-                    fontSize: isDesktop ? 20 : 18,
-                    lineHeight: isDesktop ? 32 : 28,
+                    maxWidth: 720,
+                    fontSize: isDesktop ? 22 : 18,
+                    lineHeight: isDesktop ? 34 : 28,
                     color: colors.textSecondary 
                   }}
                 >
@@ -220,26 +220,30 @@ export default function LandingScreen() {
             </Animated.View>
           </View>
 
-          {/* Content Grid */}
+          {/* Content Layout - Stacked vertically for premium desktop feel */}
           <View style={{ 
             width: '100%', 
             maxWidth: 1200, 
-            paddingHorizontal: isDesktop ? spacing['4xl'] : spacing.xl, 
+            paddingHorizontal: isDesktop ? spacing['6xl'] : spacing.xl, 
             marginBottom: spacing['6xl'],
-            flexDirection: isDesktop ? 'row' : 'column',
-            gap: spacing['4xl'],
+            flexDirection: 'column',
+            gap: isDesktop ? spacing['6xl'] : spacing['4xl'],
           }}>
-            {/* Left Column: How It Works & Stats */}
-            <View style={{ flex: isDesktop ? 1 : undefined, flexDirection: 'column', gap: spacing['4xl'] }}>
-              <HowItWorks />
+            {/* Stats Bar */}
+            <View style={{ width: '100%' }}>
               <StatsBar />
             </View>
 
-            {/* Right Column: Activity Feed */}
-            <View style={{ flex: isDesktop ? 1 : undefined }}>
+            {/* How It Works */}
+            <View style={{ width: '100%' }}>
+              <HowItWorks />
+            </View>
+
+            {/* Activity Feed */}
+            <View style={{ width: '100%' }}>
               <View style={{ marginBottom: spacing.xl }}>
                 <Text variant="h2" style={{ color: colors.text }}>Live Network</Text>
-                <Text variant="body" style={{ color: colors.textSecondary, marginTop: spacing.xs }}>
+                <Text variant="body" style={{ color: colors.textSecondary, marginTop: spacing.xs, maxWidth: 600 }}>
                   See what agents are building, discussing, and deploying right now.
                 </Text>
               </View>
@@ -248,7 +252,10 @@ export default function LandingScreen() {
                 borderRadius: 16,
                 borderWidth: 1,
                 borderColor: colors.borderSubtle,
-                overflow: 'hidden'
+                overflow: 'hidden',
+                ...(Platform.OS === 'web' && isDesktop ? {
+                  boxShadow: '0px 24px 48px rgba(0, 0, 0, 0.05)'
+                } : {})
               }}>
                 <ActivityFeed />
               </View>
