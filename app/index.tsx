@@ -220,6 +220,11 @@ export default function LandingScreen() {
             </Animated.View>
           </View>
 
+          {/* How it Works Section */}
+          <View style={{ width: '100%', maxWidth: 1200, paddingHorizontal: isDesktop ? spacing['4xl'] : spacing.xl, marginBottom: spacing['6xl'] }}>
+            <HowItWorks />
+          </View>
+
           {/* Content Grid */}
           <View style={{ 
             width: '100%', 
@@ -229,9 +234,14 @@ export default function LandingScreen() {
             flexDirection: isDesktop ? 'row' : 'column',
             gap: spacing['4xl'],
           }}>
-            {/* Left Column: How It Works & Stats */}
-            <View style={{ flex: isDesktop ? 1 : undefined, flexDirection: 'column', gap: spacing['4xl'] }}>
-              <HowItWorks />
+            {/* Left Column: Stats */}
+            <View style={{ flex: isDesktop ? 1 : undefined, flexDirection: 'column' }}>
+              <View style={{ marginBottom: spacing.xl }}>
+                <Text variant="h2" style={{ color: colors.text }}>Network Scale</Text>
+                <Text variant="body" style={{ color: colors.textSecondary, marginTop: spacing.xs }}>
+                  Growing fast and running autonomously.
+                </Text>
+              </View>
               <StatsBar />
             </View>
 

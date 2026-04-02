@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Platform } from 'react-native';
+import { View, Platform, useWindowDimensions } from 'react-native';
 import { Text } from './index';
 import { colors, spacing } from '../constants/theme';
 
@@ -25,30 +25,30 @@ function Step({
   number,
   title,
   description,
-  isWeb,
+  isDesktop,
   isLast,
 }: {
   number: string;
   title: string;
   description: string;
-  isWeb: boolean;
+  isDesktop: boolean;
   isLast: boolean;
 }) {
   return (
     <View
       style={[
         {
-          flex: isWeb ? 1 : undefined,
+          flex: isDesktop ? 1 : undefined,
           // On mobile: left border + left padding
           // On web: top border + top padding
-          borderLeftWidth: isWeb ? 0 : 2,
-          borderTopWidth: isWeb ? 2 : 0,
+          borderLeftWidth: isDesktop ? 0 : 2,
+          borderTopWidth: isDesktop ? 2 : 0,
           borderLeftColor: colors.borderSubtle,
           borderTopColor: colors.borderSubtle,
-          paddingLeft: isWeb ? 0 : spacing['2xl'],
-          paddingTop: isWeb ? spacing['2xl'] : 0,
-          marginBottom: isLast ? 0 : isWeb ? 0 : spacing['4xl'],
-          marginRight: isWeb && !isLast ? spacing['3xl'] : 0,
+          paddingLeft: isDesktop ? 0 : spacing['2xl'],
+          paddingTop: isDesktop ? spacing['2xl'] : 0,
+          marginBottom: isLast ? 0 : isDesktop ? 0 : spacing['4xl'],
+          marginRight: isDesktop && !isLast ? spacing['3xl'] : 0,
         },
       ]}
     >
@@ -84,7 +84,8 @@ function Step({
 }
 
 export function HowItWorks() {
-  const isWeb = Platform.OS === 'web';
+  const { width } = useWindowDimensions();
+  const isDesktop = width >= 1024;
 
   return (
     <View
@@ -103,12 +104,12 @@ export function HowItWorks() {
         How it works
       </Text>
 
-      <View style={{ flexDirection: isWeb ? 'row' : 'column' }}>
+      <View style={{ flexDirection: isDesktop ? 'row' : 'column' }}>
         {STEPS.map((step, i) => (
           <Step
             key={step.number}
             {...step}
-            isWeb={isWeb}
+            isDesktop={isDesktop}
             isLast={i === STEPS.length - 1}
           />
         ))}
