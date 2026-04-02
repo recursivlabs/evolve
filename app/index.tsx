@@ -46,7 +46,7 @@ export default function LandingScreen() {
   }
 
   return (
-    <Container safeTop safeBottom centered={false}>
+    <Container safeTop safeBottom centered={false} maxWidth={9999} padded={false}>
       {/* Absolute Header (sticky on web via component implementation) */}
       <Header />
 
