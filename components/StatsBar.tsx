@@ -78,16 +78,13 @@ export function StatsBar() {
   }, [loading, fadeAnim]);
 
   const containerStyle = {
-    marginHorizontal: spacing['3xl'],
     marginBottom: spacing['3xl'],
     borderRadius: radius.lg,
     backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: colors.borderSubtle,
     overflow: 'hidden' as const,
-    ...(Platform.OS === 'web'
-      ? { maxWidth: 600, alignSelf: 'center' as const, width: '100%' as any }
-      : {}),
+    width: '100%' as const,
   };
 
   if (loading) {
