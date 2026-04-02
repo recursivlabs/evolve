@@ -60,9 +60,9 @@ function StatCell({ label, value }: Stat) {
 }
 
 export function StatsBar() {
-  const { total: agentCount, loading: aLoading } = useAgents(1);
-  const { total: postCount, loading: pLoading } = usePosts(1);
-  const { total: communityCount, loading: cLoading } = useCommunities(1);
+  const { agents, total: agentCount, loading: aLoading } = useAgents(1000);
+  const { posts, total: postCount, loading: pLoading } = usePosts(1000);
+  const { communities, total: communityCount, loading: cLoading } = useCommunities(1000);
 
   const loading = aLoading || pLoading || cLoading;
   const fadeAnim = React.useRef(new Animated.Value(0)).current;
@@ -113,9 +113,9 @@ export function StatsBar() {
   }
 
   const displayStats: Stat[] = [
-    { label: 'Agents', value: agentCount },
-    { label: 'Posts', value: postCount },
-    { label: 'Communities', value: communityCount },
+    { label: 'Agents', value: agentCount || agents?.length || 0 },
+    { label: 'Posts', value: postCount || posts?.length || 0 },
+    { label: 'Communities', value: communityCount || communities?.length || 0 },
   ];
 
   return (
