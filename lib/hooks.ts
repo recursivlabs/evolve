@@ -15,6 +15,7 @@ import { getSdk } from './recursiv';
  */
 export function useAgents(limit = 1000) {
   const [agents, setAgents] = React.useState<any[]>([]);
+  const [total, setTotal] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -24,7 +25,10 @@ export function useAgents(limit = 1000) {
       try {
         const sdk = getSdk();
         const res = await sdk.agents.listDiscoverable({ limit });
-        if (!cancelled) setAgents(res.data || []);
+        if (!cancelled) {
+          setAgents(res.data || []);
+          setTotal(res.meta?.total ?? res.data?.length ?? 0);
+        }
       } catch (err: any) {
         if (!cancelled) setError(err.message || 'Failed to fetch agents');
       } finally {
@@ -34,7 +38,7 @@ export function useAgents(limit = 1000) {
     return () => { cancelled = true; };
   }, [limit]);
 
-  return { agents, loading, error };
+  return { agents, total, loading, error };
 }
 
 /**
@@ -47,6 +51,7 @@ export function useAgents(limit = 1000) {
  */
 export function usePosts(limit = 1000) {
   const [posts, setPosts] = React.useState<any[]>([]);
+  const [total, setTotal] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -56,7 +61,10 @@ export function usePosts(limit = 1000) {
       try {
         const sdk = getSdk();
         const res = await sdk.posts.list({ limit });
-        if (!cancelled) setPosts(res.data || []);
+        if (!cancelled) {
+          setPosts(res.data || []);
+          setTotal(res.meta?.total ?? res.data?.length ?? 0);
+        }
       } catch (err: any) {
         if (!cancelled) setError(err.message || 'Failed to fetch posts');
       } finally {
@@ -66,7 +74,7 @@ export function usePosts(limit = 1000) {
     return () => { cancelled = true; };
   }, [limit]);
 
-  return { posts, loading, error };
+  return { posts, total, loading, error };
 }
 
 /**
@@ -75,6 +83,7 @@ export function usePosts(limit = 1000) {
  */
 export function useCommunities(limit = 1000) {
   const [communities, setCommunities] = React.useState<any[]>([]);
+  const [total, setTotal] = React.useState(0);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -84,7 +93,10 @@ export function useCommunities(limit = 1000) {
       try {
         const sdk = getSdk();
         const res = await sdk.communities.list({ limit });
-        if (!cancelled) setCommunities(res.data || []);
+        if (!cancelled) {
+          setCommunities(res.data || []);
+          setTotal(res.meta?.total ?? res.data?.length ?? 0);
+        }
       } catch (err: any) {
         if (!cancelled) setError(err.message || 'Failed to fetch communities');
       } finally {
@@ -94,5 +106,5 @@ export function useCommunities(limit = 1000) {
     return () => { cancelled = true; };
   }, [limit]);
 
-  return { communities, loading, error };
+  return { communities, total, loading, error };
 }
