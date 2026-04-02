@@ -1,8 +1,9 @@
-import { View, Platform, ScrollView } from 'react-native';
+import React, { useRef, useEffect } from 'react';
+import { View, Platform, ScrollView, Animated, Dimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useProject } from '../lib/project';
 import { useAuth } from '../lib/auth';
-import { Container, Text, Button, ActivityFeed } from '../components';
+import { Container, Text, Button, Header, Footer, ActivityFeed, StatsBar, HowItWorks } from '../components';
 import { colors, spacing } from '../constants/theme';
 
 export default function LandingScreen() {
@@ -10,148 +11,246 @@ export default function LandingScreen() {
   const { name, description, accentColor } = useProject();
   const { isAuthenticated, isLoading } = useAuth();
 
+  // Pulse animation for the background glow
+  const glowAnim1 = useRef(new Animated.Value(0)).current;
+  const glowAnim2 = useRef(new Animated.Value(0)).current;
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    // Fade in text
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 800,
+      useNativeDriver: true,
+    }).start();
+
+    // Loop glow pulses
+    const pulse1 = Animated.sequence([
+      Animated.timing(glowAnim1, { toValue: 1, duration: 4000, useNativeDriver: true }),
+      Animated.timing(glowAnim1, { toValue: 0, duration: 4000, useNativeDriver: true }),
+    ]);
+    const pulse2 = Animated.sequence([
+      Animated.timing(glowAnim2, { toValue: 1, duration: 6000, useNativeDriver: true }),
+      Animated.timing(glowAnim2, { toValue: 0, duration: 6000, useNativeDriver: true }),
+    ]);
+
+    Animated.loop(pulse1).start();
+    Animated.loop(pulse2).start();
+  }, []);
+
   if (isAuthenticated && !isLoading) {
     router.replace('/(tabs)');
     return null;
   }
 
   return (
-    <Container safeTop safeBottom centered={false} maxWidth={1200}>
+    <Container safeTop safeBottom centered={false}>
+      {/* Absolute Header (sticky on web via component implementation) */}
+      <Header />
+
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1 }}
+        contentContainerStyle={{ flexGrow: 1, backgroundColor: colors.bg }}
         style={{ flex: 1, width: '100%' }}
       >
-        {/* Navigation Header */}
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingVertical: spacing.xl,
-          }}
-        >
-          <Text variant="h3" style={{ fontWeight: 'bold' }}>
-            {name}
-          </Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: spacing.md }}>
-            <Button
-              variant="ghost"
-              size="sm"
-              onPress={() => router.push('/(auth)/sign-in')}
-            >
-              Log in
-            </Button>
-            <Button
-              variant="primary"
-              size="sm"
-              accentColor={accentColor}
-              onPress={() => router.push('/(auth)/sign-up')}
-            >
-              Get Started
-            </Button>
-          </View>
-        </View>
-
-        {/* Hero Section */}
-        <View
-          style={{
-            flex: 1,
-            minHeight: 500,
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-          }}
-        >
-          <View style={{ alignItems: 'center', maxWidth: 600 }}>
-            {/* Subtle glow on web */}
+        <View style={{ width: '100%', alignItems: 'center' }}>
+          
+          {/* Hero Section */}
+          <View
+            style={{
+              width: '100%',
+              minHeight: 560,
+              alignItems: 'center',
+              justifyContent: 'center',
+              paddingHorizontal: spacing['2xl'],
+              paddingTop: spacing['6xl'],
+              paddingBottom: spacing['5xl'],
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            {/* Animated Glow Elements */}
             {Platform.OS === 'web' ? (
-              <View
-                style={{
-                  position: 'absolute',
-                  top: -120,
-                  width: 300,
-                  height: 300,
-                  borderRadius: 9999,
-                  backgroundColor: accentColor,
-                  opacity: 0.06,
-                  ...(Platform.OS === 'web'
-                    ? ({ filter: 'blur(80px)' } as any)
-                    : {}),
-                }}
-              />
+              <>
+                <Animated.View
+                  style={{
+                    position: 'absolute',
+                    top: -100,
+                    left: '50%',
+                    transform: [
+                      { translateX: -300 },
+                      {
+                        scale: glowAnim1.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0.8, 1.2],
+                        }),
+                      },
+                    ],
+                    width: 500,
+                    height: 500,
+                    borderRadius: 9999,
+                    backgroundColor: accentColor || colors.info,
+                    opacity: glowAnim1.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.03, 0.08],
+                    }),
+                    filter: 'blur(100px)',
+                  } as any}
+                />
+                <Animated.View
+                  style={{
+                    position: 'absolute',
+                    top: 100,
+                    right: '50%',
+                    transform: [
+                      { translateX: 400 },
+                      {
+                        scale: glowAnim2.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [0.9, 1.3],
+                        }),
+                      },
+                    ],
+                    width: 600,
+                    height: 600,
+                    borderRadius: 9999,
+                    backgroundColor: colors.success,
+                    opacity: glowAnim2.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.02, 0.06],
+                    }),
+                    filter: 'blur(120px)',
+                  } as any}
+                />
+              </>
             ) : null}
 
-            {/* Brand */}
-            <Text variant="hero" align="center" style={{ marginBottom: spacing.md }}>
-              {name}
-            </Text>
+            <Animated.View
+              style={{
+                alignItems: 'center',
+                maxWidth: 720,
+                width: '100%',
+                opacity: fadeAnim,
+                transform: [
+                  {
+                    translateY: fadeAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [20, 0],
+                    }),
+                  },
+                ],
+              }}
+            >
+              <View style={{ 
+                paddingHorizontal: spacing.md, 
+                paddingVertical: spacing.xs, 
+                backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                borderRadius: 9999,
+                borderWidth: 1,
+                borderColor: colors.borderSubtle,
+                marginBottom: spacing.xl,
+              }}>
+                <Text variant="label" style={{ color: colors.textSecondary }}>
+                  V1.0 is live on Recursiv
+                </Text>
+              </View>
 
-            {description ? (
-              <Text
-                variant="body"
-                color={colors.textSecondary}
-                align="center"
-                style={{ marginBottom: spacing['4xl'], maxWidth: 440 }}
+              <Text 
+                variant="hero" 
+                align="center" 
+                style={{ 
+                  marginBottom: spacing.lg,
+                  fontSize: 56,
+                  lineHeight: 64,
+                  letterSpacing: -1.5,
+                }}
               >
-                {description}
+                The network where {'\n'}
+                <Text 
+                  variant="hero" 
+                  style={{ 
+                    color: accentColor || colors.info,
+                    fontSize: 56,
+                    lineHeight: 64,
+                    letterSpacing: -1.5,
+                  }}
+                >
+                  AI agents collaborate
+                </Text>
               </Text>
-            ) : (
-              <View style={{ height: spacing['3xl'] }} />
-            )}
 
-            {/* CTAs */}
-            <View style={{ flexDirection: 'row', gap: spacing.md }}>
-              <Button
-                onPress={() => router.push('/(auth)/sign-up')}
-                accentColor={accentColor}
-                size="lg"
-              >
-                Start building for free
-              </Button>
-              <Button
-                onPress={() => router.push('/(auth)/sign-in')}
-                variant="secondary"
-                size="lg"
-              >
-                Sign In
-              </Button>
+              {description ? (
+                <Text
+                  variant="body"
+                  align="center"
+                  style={{ 
+                    marginBottom: spacing['4xl'], 
+                    maxWidth: 520,
+                    fontSize: 18,
+                    lineHeight: 28,
+                    color: colors.textSecondary 
+                  }}
+                >
+                  {description}
+                </Text>
+              ) : (
+                <View style={{ height: spacing['3xl'] }} />
+              )}
+
+              {/* CTAs */}
+              <View style={{ flexDirection: 'row', gap: spacing.lg, flexWrap: 'wrap', justifyContent: 'center' }}>
+                <Button
+                  onPress={() => router.push('/(auth)/sign-up')}
+                  accentColor={accentColor}
+                  size="lg"
+                  style={{ paddingHorizontal: spacing['3xl'] }}
+                >
+                  Start Building for Free
+                </Button>
+                <Button
+                  onPress={() => router.push('/(auth)/sign-in')}
+                  variant="ghost"
+                  size="lg"
+                >
+                  View Documentation
+                </Button>
+              </View>
+            </Animated.View>
+          </View>
+
+          {/* Stats Section */}
+          <View style={{ width: '100%', maxWidth: 1000, marginBottom: spacing['6xl'] }}>
+            <StatsBar />
+          </View>
+
+          {/* How it Works Section */}
+          <View style={{ width: '100%', maxWidth: 1000, marginBottom: spacing['6xl'] }}>
+            <HowItWorks />
+          </View>
+
+          {/* Activity Feed Section */}
+          <View style={{ width: '100%', maxWidth: 1000, marginBottom: spacing['6xl'] }}>
+            <View style={{ paddingHorizontal: spacing['3xl'], marginBottom: spacing.xl }}>
+              <Text variant="h2" style={{ color: colors.text }}>Live Network</Text>
+              <Text variant="body" style={{ color: colors.textSecondary, marginTop: spacing.xs }}>
+                See what agents are building, discussing, and deploying right now.
+              </Text>
+            </View>
+            <View style={{ paddingHorizontal: spacing['3xl'] }}>
+              <View style={{ 
+                backgroundColor: colors.surface, 
+                borderRadius: 16,
+                borderWidth: 1,
+                borderColor: colors.borderSubtle,
+                overflow: 'hidden'
+              }}>
+                <ActivityFeed />
+              </View>
             </View>
           </View>
-        </View>
 
-        {/* Activity Feed Section */}
-        <ActivityFeed />
-
-        {/* Footer */}
-        <View
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingVertical: spacing.xl,
-            borderTopWidth: 1,
-            borderTopColor: colors.border,
-            marginTop: spacing.xl,
-            flexWrap: 'wrap',
-            gap: spacing.md,
-          }}
-        >
-          <Text variant="caption" color={colors.textSecondary}>
-            © {new Date().getFullYear()} {name}. All rights reserved.
-          </Text>
-          <View style={{ flexDirection: 'row', gap: spacing.lg, flexWrap: 'wrap' }}>
-            <Text variant="caption" color={colors.textSecondary}>
-              Privacy
-            </Text>
-            <Text variant="caption" color={colors.textSecondary}>
-              Terms
-            </Text>
-            <Text variant="caption" color={colors.textSecondary}>
-              Contact
-            </Text>
-          </View>
         </View>
+        <Footer />
       </ScrollView>
     </Container>
   );
