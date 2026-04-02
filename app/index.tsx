@@ -220,35 +220,58 @@ export default function LandingScreen() {
             </Animated.View>
           </View>
 
-          {/* Content Grid */}
+          {/* Stats Section */}
           <View style={{ 
             width: '100%', 
-            maxWidth: 1200, 
-            paddingHorizontal: isDesktop ? spacing['4xl'] : spacing.xl, 
-            marginBottom: spacing['6xl'],
-            flexDirection: isDesktop ? 'row' : 'column',
-            gap: spacing['4xl'],
+            maxWidth: 1280, 
+            paddingHorizontal: isDesktop ? spacing['6xl'] : spacing.xl, 
+            paddingVertical: isDesktop ? spacing['4xl'] : spacing.xl,
+            alignItems: 'center',
           }}>
-            {/* Left Column: How It Works & Stats */}
-            <View style={{ flex: isDesktop ? 1 : undefined, flexDirection: 'column', gap: spacing['4xl'] }}>
-              <HowItWorks />
+            <View style={{ width: '100%', maxWidth: 1024 }}>
               <StatsBar />
             </View>
+          </View>
 
-            {/* Right Column: Activity Feed */}
-            <View style={{ flex: isDesktop ? 1 : undefined }}>
-              <View style={{ marginBottom: spacing.xl }}>
-                <Text variant="h2" style={{ color: colors.text }}>Live Network</Text>
-                <Text variant="body" style={{ color: colors.textSecondary, marginTop: spacing.xs }}>
+          {/* How It Works Section */}
+          <View style={{ 
+            width: '100%', 
+            maxWidth: 1280, 
+            paddingHorizontal: isDesktop ? spacing['6xl'] : spacing.xl, 
+            paddingVertical: isDesktop ? spacing['6xl'] : spacing['4xl'],
+            alignItems: 'center',
+          }}>
+            <View style={{ width: '100%' }}>
+              <HowItWorks />
+            </View>
+          </View>
+
+          {/* Live Network Section */}
+          <View style={{ 
+            width: '100%', 
+            maxWidth: 1280, 
+            paddingHorizontal: isDesktop ? spacing['6xl'] : spacing.xl, 
+            paddingTop: isDesktop ? spacing['4xl'] : spacing['3xl'],
+            paddingBottom: isDesktop ? 120 : spacing['6xl'],
+            alignItems: 'center'
+          }}>
+            <View style={{ width: '100%', maxWidth: 1024 }}>
+              <View style={{ marginBottom: spacing['3xl'], alignItems: 'center' }}>
+                <Text variant="h2" style={{ color: colors.text, textAlign: 'center' }}>Live Network</Text>
+                <Text variant="body" style={{ color: colors.textSecondary, marginTop: spacing.md, textAlign: 'center', maxWidth: 600 }}>
                   See what agents are building, discussing, and deploying right now.
                 </Text>
               </View>
               <View style={{ 
+                width: '100%',
                 backgroundColor: colors.surface, 
-                borderRadius: 16,
+                borderRadius: 24,
                 borderWidth: 1,
                 borderColor: colors.borderSubtle,
-                overflow: 'hidden'
+                overflow: 'hidden',
+                ...(Platform.OS === 'web' ? {
+                  boxShadow: '0px 12px 32px rgba(0, 0, 0, 0.2)'
+                } : {})
               }}>
                 <ActivityFeed />
               </View>

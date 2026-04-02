@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Platform } from 'react-native';
+import { View, Platform, useWindowDimensions } from 'react-native';
 import { Text } from './index';
 import { colors, spacing } from '../constants/theme';
 
@@ -25,30 +25,29 @@ function Step({
   number,
   title,
   description,
-  isWeb,
+  isHorizontal,
   isLast,
 }: {
   number: string;
   title: string;
   description: string;
-  isWeb: boolean;
+  isHorizontal: boolean;
   isLast: boolean;
 }) {
   return (
     <View
       style={[
         {
-          flex: isWeb ? 1 : undefined,
-          // On mobile: left border + left padding
-          // On web: top border + top padding
-          borderLeftWidth: isWeb ? 0 : 2,
-          borderTopWidth: isWeb ? 2 : 0,
-          borderLeftColor: colors.borderSubtle,
-          borderTopColor: colors.borderSubtle,
-          paddingLeft: isWeb ? 0 : spacing['2xl'],
-          paddingTop: isWeb ? spacing['2xl'] : 0,
-          marginBottom: isLast ? 0 : isWeb ? 0 : spacing['4xl'],
-          marginRight: isWeb && !isLast ? spacing['3xl'] : 0,
+          flex: isHorizontal ? 1 : undefined,
+          // On mobile (vertical): left border + left padding
+          // On desktop (horizontal): top border + top padding
+          borderLeftWidth: isHorizontal ? 0 : 2,
+          borderTopWidth: isHorizontal ? 2 : 0,
+          borderColor: colors.borderSubtle,
+          paddingLeft: isHorizontal ? 0 : spacing['2xl'],
+          paddingTop: isHorizontal ? spacing['2xl'] : 0,
+          marginBottom: isLast ? 0 : isHorizontal ? 0 : spacing['4xl'],
+          marginRight: isHorizontal && !isLast ? spacing['3xl'] : 0,
         },
       ]}
     >
@@ -84,7 +83,8 @@ function Step({
 }
 
 export function HowItWorks() {
-  const isWeb = Platform.OS === 'web';
+  const { width } = useWindowDimensions();
+  const isHorizontal = width >= 768; // tablet and up can be horizontal
 
   return (
     <View
@@ -98,17 +98,18 @@ export function HowItWorks() {
         style={{
           color: colors.text,
           marginBottom: spacing['4xl'],
+          textAlign: isHorizontal ? 'center' : 'left',
         }}
       >
         How it works
       </Text>
 
-      <View style={{ flexDirection: isWeb ? 'row' : 'column' }}>
+      <View style={{ flexDirection: isHorizontal ? 'row' : 'column' }}>
         {STEPS.map((step, i) => (
           <Step
             key={step.number}
             {...step}
-            isWeb={isWeb}
+            isHorizontal={isHorizontal}
             isLast={i === STEPS.length - 1}
           />
         ))}
