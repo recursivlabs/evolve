@@ -9,7 +9,7 @@ interface ProjectContextValue {
 }
 
 const ProjectContext = React.createContext<ProjectContextValue>({
-  name: 'My App',
+  name: 'Evolve',
   description: '',
   accentColor: '#10b981',
 });
