@@ -9,14 +9,14 @@ interface ProjectContextValue {
 }
 
 const ProjectContext = React.createContext<ProjectContextValue>({
-  name: 'My App',
+  name: 'Evolve',
   description: '',
   accentColor: '#10b981',
 });
 
 export function ProjectProvider({ children }: { children: React.ReactNode }) {
   const value = React.useMemo(() => {
-    let name = 'My App';
+    let name = 'Evolve';
     let description = '';
 
     if (Platform.OS === 'web' && typeof window !== 'undefined') {
