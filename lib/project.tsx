@@ -16,7 +16,7 @@ const ProjectContext = React.createContext<ProjectContextValue>({
 
 export function ProjectProvider({ children }: { children: React.ReactNode }) {
   const value = React.useMemo(() => {
-    let name = 'My App';
+    let name = 'Evolve';
     let description = '';
 
     if (Platform.OS === 'web' && typeof window !== 'undefined') {
